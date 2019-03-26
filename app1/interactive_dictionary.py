@@ -1,32 +1,37 @@
+import requests
 import json
 import difflib
 
 __doc__ = """Interactive Dictionary Lookup Utility
 
-An interactive dictionary, word usage lookup command-line script.
+An interactive dictionary command-line script. Look up usages of a word
+within a language dictionary file.
+ 
+This project comes packaged with an English-language dictionary file.
+That json-formatted data file will be used by default if no other
+dictionary source is specified (see below).   
 
 Optional command-line parameters:
     --help, -h                  Print this help message and exit.
-    --file string, -f string    Path to a json-formatted dictionary file.
-"""
+    --file string, -f string    Path to a json-formatted dictionary file."""
+__version__ = '1.0.0'
+_disclaimer = """Code adapted from the App1 exercise of:
+    The Python Mega Course, <https://www.udemy.com/the-python-mega-course>
+    Course instructor, Ardit Sulce <https://www.udemy.com/user/adiune>"""
 _author = 'David Schenck, aka zero2cx'
 _repo = 'https://github.com/zero2cx/tpmc'
-_disclaimer = """Code adapted from the App1 exercise of:
-  The Python Mega Course, <https://www.udemy.com/the-python-mega-course>
-  Course instructor, Ardit Sulce <https://www.udemy.com/user/adiune> 
-"""
 
 
 def _lookup_usages(data, word):
-    """If possible, lookup valid usages for the specified word.
+    """Lookup dictionary usages for the specified word.
 
-    Return the validated word and any word usages that are found within the
-    global dict (i.e. data), or the unvalidated word and None.
+    Return a 2-tuple consisting of either: the validated word and a list
+    of all word usages found, or the unvalidated word and None in those
+    cases where no usages are found.
 
-    :param data:        [dict]  repository of word usages
-    :param word:        [str]   word to look up
-    :return:            [tuple] (word with case as found, list of usages) or
-                                (word with original case, None)
+    :param data:        [dict]      repository of word usages
+    :param word:        [str]       word to look up
+    :return:            [2-tuple]   (word, list of usages) or (word, None)
     """
     usages = data.get(word.lower())
     if usages:
@@ -44,11 +49,14 @@ def _lookup_usages(data, word):
 
 
 def _get_near_misses(data, word):
-    """Use difflib to try to locate any close matches for the specified word.
+    """Locate the best dictionary near-matches for the specified word.
 
-    :param data:        [dict]  repository of word usages
-    :param word:        [str]   word to match via difflib
-    :return:            [set]   close matches that were found
+    Uses the difflib package (Python Standard Library) and the spelling of
+    the word to find the best near-matches.
+
+    :param data:        [dict]      repository of word usages
+    :param word:        [str]       word to match
+    :return:            [set]       near-match words that were found
     """
     guess_words = [word.lower(), word.upper(), word.title()]
     words = []
@@ -62,11 +70,13 @@ def _get_near_misses(data, word):
 def _parse_args(args):
     """Parse and validate any command line arguments.
 
-    Upon request or if arguments are incoherent, print the module docstring
-    and exit. Return the parsed or default dictionary file name.
+    Return either the parsed or default dictionary file name.
 
-    :param args:    [list]  command-line arguments
-    :return:        [str]   parsed or default dictionary file name
+    Upon request or when the parsed arguments are incoherent, print the
+    module's docstring and exit.
+
+    :param args:        [list]      command-line arguments
+    :return:            [str]       parsed or default dictionary file name
     """
     default_assets_dir = '../assets'
     default_data_file = 'data.json'
@@ -81,27 +91,39 @@ def _parse_args(args):
     if args[0] == '--file' or args[0] == '-f':
         try:
             return args[1]
-        except:
+        except IndexError:
             print(__doc__)
             exit(1)
 
 
-def _get_data(filename):
+def get_data(filename):
     """Read the specified json-formatted file containing common word usages.
 
-    Populate and return a dict containing dictionary word usage data.
+    Populate and return a dict containing words (keys) and their dictionary
+    usages (values).
 
-    :param filename:    [str]   source file name
-    :return:            [dict]  parsed content from json-formatted source file
+    :param filename:    [str]       source file name
+    :return:            [dict]      data from the json-formatted data file
     """
-    with open(filename) as fh:
-        return json.loads(fh.read())
+    try:
+        with open(filename) as fh:
+            return json.loads(fh.read())
+
+    except json.decoder.JSONDecodeError as e:
+        raise e
+
+    except OSError as e:
+        if e.strerror == 'Invalid argument' and filename[:4] == 'http':
+            req = requests.get(filename)
+            return json.loads(req.content)
 
 
-def _main(data):
-    """Main loop that prompts for a word, produces the result, and prints it.
+def main(data):
+    """The main loop uses a command-line interface for script input and output.
 
-    :param data:        [dict]  repository of word usages
+    Prompt the user for a word, conduct dictionary lookups, print the result.
+
+    :param data:        [dict]      repository of word usages
     """
     banner_msg = '== Interactive Dictionary Lookup Utility =='
     prompt_msg = 'Type a word [hit ENTER to quit]: '
@@ -110,19 +132,25 @@ def _main(data):
     while word:
         found_word, found_usages = _lookup_usages(data, word)
 
-        if found_usages:
-            print(f'** found {len(found_usages)} usages of {found_word} **')
+        if isinstance(found_usages, list):
+            print(f'  * found {len(found_usages)} usages of {found_word}')
             for usage in found_usages:
-                print(f'   * {usage}')
+                print(f'    * {usage}')
+
+        elif isinstance(found_usages, str):
+            print(f'  * found 1 usage of {found_word}')
+            print(f'    * {found_usages}')
 
         else:
-            print(f'-- word not found: {word} --')
-            found_words = _get_near_misses(data, word)
+            print(f'  - {word} not found', end='')
+            found_misses = _get_near_misses(data, word)
 
-            if found_words:
-                print(f'?? did you mean ??')
-                for found_word in found_words:
-                    print(f'   ? {found_word}')
+            if found_misses:
+                print(f'... did you mean?')
+                for found_miss in found_misses:
+                    print(f'    ? {found_miss}')
+            else:
+                print()
 
         word = input(f'\n{prompt_msg}').strip()
 
@@ -132,4 +160,6 @@ def _main(data):
 
 if __name__ == '__main__':
     import sys
-    _main(_get_data(_parse_args(sys.argv[1:])))
+    dictionary_file = _parse_args(sys.argv[1:])
+    dictionary_data = get_data(filename=dictionary_file)
+    main(data=dictionary_data)
