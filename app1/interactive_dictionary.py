@@ -1,4 +1,5 @@
 import requests
+# from requests.exceptions import RequestException
 import json
 import difflib
 
@@ -20,6 +21,14 @@ _disclaimer = """Code adapted from the App1 exercise of:
     Course instructor, Ardit Sulce <https://www.udemy.com/user/adiune>"""
 _author = 'David Schenck, aka zero2cx'
 _repo = 'https://github.com/zero2cx/tpmc'
+
+
+class DownloadError(Exception):
+    pass
+
+
+class InvalidFileStructure(Exception):
+    pass
 
 
 def _lookup_usages(data, word):
@@ -96,11 +105,14 @@ def _parse_args(args):
             exit(1)
 
 
-def get_data(filename):
+def get_data_file(filename):
     """Read the specified json-formatted file containing common word usages.
 
     Populate and return a dict containing words (keys) and their dictionary
     usages (values).
+
+    The language dictionary file must contain a valid json structure. The
+    file may be located on the local filesystem or on a remote server.
 
     :param filename:    [str]       source file name
     :return:            [dict]      data from the json-formatted data file
@@ -109,13 +121,25 @@ def get_data(filename):
         with open(filename) as fh:
             return json.loads(fh.read())
 
-    except json.decoder.JSONDecodeError as e:
-        raise e
+    except FileNotFoundError:
+        raise FileNotFoundError(filename)
+
+    except json.JSONDecodeError:
+        raise InvalidFileStructure(filename)
 
     except OSError as e:
         if e.strerror == 'Invalid argument' and filename[:4] == 'http':
-            req = requests.get(filename)
-            return json.loads(req.content)
+            try:
+                req = requests.get(filename)
+                return json.loads(req.content)
+
+            except requests.exceptions.RequestException:
+                raise DownloadError(filename)
+
+            except json.JSONDecodeError:
+                raise InvalidFileStructure(filename)
+
+    raise FileNotFoundError(filename)
 
 
 def main(data):
@@ -160,6 +184,6 @@ def main(data):
 
 if __name__ == '__main__':
     import sys
-    dictionary_file = _parse_args(sys.argv[1:])
-    dictionary_data = get_data(filename=dictionary_file)
+    dictionary_filename = _parse_args(args=sys.argv[1:])
+    dictionary_data = get_data_file(filename=dictionary_filename)
     main(data=dictionary_data)
