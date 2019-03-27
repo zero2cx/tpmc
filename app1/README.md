@@ -20,12 +20,12 @@ This script can be implemented as a standard Python module:
 
     >>> import app1.interactive_dictionary as id
     
-    >>> data = id.get_data(filename='assets/data.json')
+    >>> data = id.get_data_file(filename='assets/data.json')
     
     >>> id.main(data=data)
         <...>
         
-    >>> data = id.get_data(filename='https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json')
+    >>> data = id.get_data_file(filename='https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json')
     
     >>> id.main(data=data)
         <...>
