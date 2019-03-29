@@ -93,16 +93,23 @@ def _parse_args(args):
     if not args:
         return f'{default_assets_dir}/{default_data_file}'
 
-    if args[0] == '--help' or args[0] == '-h':
+    if  args[0] == '-h' or args[0] == '--help':
         print(__doc__)
         exit(0)
 
-    if args[0] == '--file' or args[0] == '-f':
+    if args[0] == '-f':
         try:
             return args[1]
         except IndexError:
             print(__doc__)
             exit(1)
+
+    if args[0][:7] == '--file=':
+        file = args[0][7:]
+        if file == '':
+            print(__doc__)
+            exit(1)
+        return file
 
 
 def get_data_file(filename):
