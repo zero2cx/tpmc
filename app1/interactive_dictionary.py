@@ -15,7 +15,7 @@ dictionary source is specified (see below).
 Optional command-line parameters:
     --help, -h                  Print this help message and exit.
     --file string, -f string    Path to a json-formatted dictionary file."""
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 _disclaimer = """Code adapted from the App1 exercise of:
     The Python Mega Course, <https://www.udemy.com/the-python-mega-course>
     Course instructor, Ardit Sulce <https://www.udemy.com/user/adiune>"""
