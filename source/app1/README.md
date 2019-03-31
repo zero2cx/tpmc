@@ -15,7 +15,7 @@ Optional command-line parameters:
 
     --help, -h                Print this help message and exit.
     --file filename, -f filename
-                              Path to a json-formatted dictionary file."""
+                              Path to a json-formatted dictionary file.
     
 This script can be implemented as a standard Python module:
 
@@ -45,4 +45,4 @@ version | 1.0.4
 
 Adapted from the Application 1 exercise:<br>
  &nbsp; &nbsp; The Python Mega Course, https://www.udemy.com/the-python-mega-course<br>
- &nbsp; &nbsp; Course creator: Ardit Sulce, https://www.udemy.com/user/adiune<br>
+ &nbsp; &nbsp; Course Creator: Ardit Sulce, https://www.udemy.com/user/adiune<br>
