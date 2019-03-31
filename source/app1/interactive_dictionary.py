@@ -13,6 +13,7 @@ That json-formatted data file will be used by default if no other
 dictionary source is specified via the --file option.   
 
 Optional command-line parameters:
+
     --help, -h                Print this help message and exit.
     --file filename, -f filename
                               Path to a json-formatted dictionary file."""
@@ -22,7 +23,7 @@ Adapted from the Application 1 exercise:
     Course creator, Ardit Sulce <https://www.udemy.com/user/adiune>"""
 _repo = 'https://github.com/zero2cx/tpmc'
 _author = 'David Schenck, aka zero2cx'
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 
 
 class DownloadError(Exception):
