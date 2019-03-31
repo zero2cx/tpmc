@@ -23,18 +23,18 @@ This script can be implemented as a standard Python module:
     
     >>> data = id.get_data_file(filename='https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json')
 
-    >>> id.lookup_usages(data, 'giraffe')
+    >>> id.lookup_usages(data, 'giraffe')   # lookup the word "giraffe"
     ('GIRAFFE', 'An African ruminant (Camelopardalis giraffa) related to thedeers and antelopes, but placed in a family by itself; thecamelopard. It is the tallest of animals, being sometimes twenty feetfrom the hoofs to the top of the head. Its neck is very long, and itsfore legs are much longer than its hind legs.')
 
-    >>> id.get_near_matches(data, 'foo')
+    >>> id.get_near_matches(data, 'foo')    # find nearest matches for the word "foo"
     ['FOOT', 'FOOL', 'FOOD']
     
     >>> data = id.get_data_file(filename='assets/data.json')
     
-    >>> id.lookup_usages(data, 'giraffe')
+    >>> id.lookup_usages(data, 'giraffe')   # lookup the word "giraffe"
     ('giraffe', ['An African even-toed ungulate mammal, the tallest of all land-living animal species.']) 
     
-    >>> id.get_near_matches(data, 'foo')
+    >>> id.get_near_matches(data, 'foo')    # find nearest matches for the word "foo"
     ['foot', 'fool', 'food', 'OOP', 'FOLDOC', 'Forro', 'Foodo', 'zoo']
     
     
