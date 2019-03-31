@@ -45,4 +45,4 @@ This series of projects adapted from course exercises
 
 .. _`The Python Mega Course`: https://www.udemy.com/the-python-mega-course
 .. _`Ardit Sulce`: https://www.udemy.com/user/adiune.
-.. _`Interactive Dictionary Lookup Utility`: https://github.com/zero2cx/tpmc/tree/master/app1
+.. _`Interactive Dictionary Lookup Utility`: https://github.com/zero2cx/tpmc/tree/master/source/app1
