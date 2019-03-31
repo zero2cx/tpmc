@@ -22,6 +22,8 @@ This script can be implemented as a standard Python module:
     >>> import source.app1.interactive_dictionary as id
     
     >>> data = id.get_data_file(filename='https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json')
+
+    >>> id.lookup_usages(data, 'giraffe')
     ('GIRAFFE', 'An African ruminant (Camelopardalis giraffa) related to thedeers and antelopes, but placed in a family by itself; thecamelopard. It is the tallest of animals, being sometimes twenty feetfrom the hoofs to the top of the head. Its neck is very long, and itsfore legs are much longer than its hind legs.')
 
     >>> id.get_near_matches(data, 'foo')
