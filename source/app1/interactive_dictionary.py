@@ -87,7 +87,7 @@ def _parse_args(args):
     :param args:        [list]      command-line arguments
     :return:            [str]       parsed or default dictionary file name
     """
-    default_assets_dir = '../assets'
+    default_assets_dir = '../../assets'
     default_data_file = 'data.json'
 
     if not args:
