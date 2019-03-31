@@ -18,7 +18,7 @@ Optional command-line parameters:
     
 This script can be implemented as a standard Python module:
 
-    >>> import app1.interactive_dictionary as id
+    >>> import source.app1.interactive_dictionary as id
     
     >>> data = id.get_data_file(filename='assets/data.json')
     
@@ -32,7 +32,7 @@ This script can be implemented as a standard Python module:
 
 repo | https://github.com/zero2cx/tpmc
 --- | --- 
-version | 1.0.1
+version | 1.0.3
 author | David Schenck
 
 Adapted from the Application 1 exercise:<br>
