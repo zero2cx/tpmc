@@ -14,16 +14,16 @@ dictionary source is specified via the --file option.
 
 Optional command-line parameters:
 
-    --help, -h                Print this help message and exit.
-    --file filename, -f filename
-                              Path to a json-formatted dictionary file."""
+    --help, -h          Print this help message and exit.
+    --file=<FILENAME>, -f <FILENAME>
+                        Path to a json-formatted dictionary file."""
 _disclaimer = """\
 Adapted from the Application 1 exercise:
-    The Python Mega Course, <https://www.udemy.com/the-python-mega-course>
-    Course creator, Ardit Sulce <https://www.udemy.com/user/adiune>"""
+The Python Mega Course, <https://www.udemy.com/the-python-mega-course>
+Course creator, Ardit Sulce <https://www.udemy.com/user/adiune>"""
 _repo = 'https://github.com/zero2cx/tpmc'
 _author = 'David Schenck, aka zero2cx'
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 
 
 class DownloadError(Exception):
@@ -43,8 +43,8 @@ def get_data_file(filename):
     The language dictionary file must contain a valid json structure. The
     file may be located on the local filesystem or on a remote server.
 
-    :param filename:         string of source file name
-    :return:                 dict of parsed data from json-formatted file
+    :param filename:        string of source file name
+    :return:                dict of parsed data from json-formatted file
     """
     try:
         with open(filename) as fh:
@@ -78,9 +78,9 @@ def lookup_usages(data, word):
     containing all word usages that were found, or the unvalidated word
     and None in those cases where no usages were found.
 
-    :param data:              dict repository of word usages
-    :param word:              string of word to look up
-    :return:                  2-tuple of (word, list of usages) or (word, None)
+    :param data:            dict repository of word usages
+    :param word:            string of word to look up
+    :return:                2-tuple of (word, list of usages) or (word, None)
     """
     usages = data.get(word.lower())
     if usages:
@@ -102,9 +102,9 @@ def get_near_matches(data, word):
 
     Use the difflib package to find the best near-matches for the word.
 
-    :param data:              dict repository of word usages
-    :param word:              string of word to near-match
-    :return:                  list of near-match words that were found
+    :param data:            dict repository of word usages
+    :param word:            string of word to near-match
+    :return:                list of near-match words that were found
     """
     guess_words = [word.lower(), word.upper(), word.title()]
     words = []
@@ -123,11 +123,11 @@ def _parse_args(args):
     Upon request or when the parsed arguments are incoherent, print the
     module's docstring and exit.
 
-    :param args:             list of command-line arguments
-    :return:                 string of dictionary file name
+    :param args:            list of command-line arguments
+    :return:                string of dictionary file name
     """
     project_root = '../..'
-    default_assets_dir = 'assets'
+    default_assets_dir = 'assets/data'
     default_data_file = 'data.json'
 
     if not args:
@@ -158,7 +158,7 @@ def _main(data):
     Prompt the user for a word, conduct a dictionary lookup, print the result,
     then loop. Terminate the loop when the user elects to quit.
 
-    :param data:             dict repository of word usages
+    :param data:            dict repository of word usages
     """
     banner_msg = '== Interactive Dictionary Lookup Utility =='
     prompt_msg = 'Type a word [hit ENTER to quit]: '
