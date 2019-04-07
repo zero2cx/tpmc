@@ -35,7 +35,7 @@ Venzke, E (ed.). Smithsonian Institution. Downloaded 02 Apr 2019.
 https://doi.org/10.5479/si.GVP.VOTW4-2013"""
 _repo = 'https://hithib.com/zero2cx/tpmc'
 _author = 'David Schenck, aka zero2cx'
-_version = '0.9.0'
+_version = '0.9.1'
 
 class _ExcelXMLHandler(xml.sax.ContentHandler):
     """Callable class to be passed to the xml.sax parsing engine.
@@ -196,7 +196,7 @@ def load_dataframe(data_dir=None, force_download=False):
     :return:
     """
     if not data_dir:
-        data_dir = default_data_dir
+        data_dir = data_directory
 
     filenames = ['GVP_Volcano_List_Holocene-cleaned.xls',
                  'GVP_Volcano_List_Pleistocene-cleaned.xls']
@@ -214,9 +214,43 @@ def load_dataframe(data_dir=None, force_download=False):
     return dataframe
 
 
-default_data_dir = '../../assets/data'
+def _parse_args(args):
+    """Parse and validate any command line arguments.
+
+    Return either the parsed data directory name or '.'.
+
+    Upon request or when the parsed arguments are incoherent,
+    print the module's docstring and exit.
+
+    :param args:             list of command-line arguments
+    :return:                 string of data directory name
+    """
+    if not args:
+        return '.'
+
+    if  args[0] == '-h' or args[0] == '--help':
+        print(__doc__)
+        exit(0)
+
+    if args[0] == '-d':
+        try:
+            return args[1]
+        except IndexError:
+            print(__doc__)
+            exit(1)
+
+    if args[0][:7] == '--data_dir=':
+        directory = args[0][11:]
+        if directory == '':
+            print(__doc__)
+            exit(1)
+        return directory
+
+
+data_directory = '../../assets/data'
 
 if __name__ == '__main__':
-    _data_dir = '.'
+    import sys
+    _data_dir = _parse_args(args=sys.argv[1:])
     dataframe = load_dataframe(data_dir=_data_dir)
     print(dataframe)
