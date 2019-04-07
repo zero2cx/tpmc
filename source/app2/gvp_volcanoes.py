@@ -89,7 +89,7 @@ def _download_url(url):
     return content
 
 
-def _patch_content(content):
+def _patch_imperfections(content):
     """
 
     :param content:
@@ -99,6 +99,18 @@ def _patch_content(content):
     content = content.replace('(>', '(gt ').replace('(gt  ', '(gt ')
 
     return content
+
+
+# def _patch_content(content):
+#     """
+#
+#     :param content:
+#     :return:
+#     """
+#     content = content.replace('(<', '(lt ').replace('(lt  ', '(lt ')
+#     content = content.replace('(>', '(gt ').replace('(gt  ', '(gt ')
+#
+#     return content
 
 
 def _write_asset_file(directory, filename, content):
@@ -126,8 +138,8 @@ def _generate_asset_files(directory, filenames):
     os.makedirs(directory, exist_ok=True)
 
     for filename, url in zip(filenames, urls):
-        raw_content = _download_url(url)
-        content = _patch_content(raw_content)
+        content = _download_url(url)
+        content = _patch_imperfections(content)
         _write_asset_file(directory, filename, content)
 
 
@@ -158,6 +170,31 @@ def _locate_asset_files(directory, filenames):
     return all(found)
 
 
+def _fill_dead_cells(dataframe):
+    """
+
+    :param dataframe:
+    :return:
+    """
+    for column_name in dataframe.columns:
+        dataframe[column_name] = dataframe[column_name].replace('', 'no-data')
+
+    return dataframe
+
+
+def _add_new_column(dataframe, name, content):
+    """
+
+    :param dataframe:
+    :param name:
+    :param content:
+    :return:
+    """
+    dataframe[name] = [content] * len(dataframe)
+
+    return dataframe
+
+
 def _parse_asset_files(directory, filenames):
     """
 
@@ -165,17 +202,21 @@ def _parse_asset_files(directory, filenames):
     :param filenames:
     :return:
     """
+    new_columns = [{'Epoch': 'Holocene', 'Data Status': 'Accepted'},
+                   {'Epoch': 'Pleistocene', 'Data Status': 'Preliminary'}]
+
     dataframe = pd.DataFrame()
 
-    for filename in filenames:
+    for filename, new_column in zip(filenames, new_columns):
         parser = _ExcelXMLHandler()
         xml.sax.parse(f'{directory}/{filename}', parser)
-        dataframe = dataframe.append(
-            pd.DataFrame(parser.tables[0][2:], columns=parser.tables[0][1]),
-            ignore_index=True)
+        new_dataframe = pd.DataFrame(parser.tables[0][2:], columns=parser.tables[0][1])
+        new_dataframe = _fill_dead_cells(new_dataframe)
+        for column_name, cell_data in new_column.items():
+            new_dataframe = _add_new_column(new_dataframe, column_name, cell_data)
+        dataframe = dataframe.append(new_dataframe, ignore_index=True)
 
     return dataframe
-
 
 def _remove_asset_files(directory, filenames):
     """
