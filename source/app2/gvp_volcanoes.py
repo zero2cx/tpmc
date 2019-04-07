@@ -6,17 +6,27 @@ import pandas as pd
 __doc__ = """\
 GVP Volcanoes Dataset Generator
 
-Populate a Pandas DataFrame with records concerning sites around  
-the world which are categorized as showing past or present volcanic 
-activity. These data records are parsed from two Microsoft Excel 
-XML-format dataset files. Records parsed from each file are then 
-combined into one Pandas DataFrame.
+Generate a dataset sourced from public data compiled by The 
+Smithsonian Institute's Global Volcanism Project [GVP].
+
+Optional command-line parameters:
+
+    --help, -h                  Print this help message and exit.
+    --data=<DIRECTORY NAME>, -d <DIRECTORY NAME>
+                                Directory for local data assets.
+                                [DEFAULT: '.']
+
+Populate a Pandas DataFrame with records cataloguing geologic sites 
+around the world which have shown past or present volcanic activity. 
+These data records are parsed from two Microsoft Excel XML-format 
+dataset files (see urls below). The records parsed from each file 
+are then combined into one Pandas DataFrame.
  
 This script's first execution will proceed to download the GVP's 
-latest dataset files. Then minor errors in formatting contained in 
-the records are cleaned up. These cleaned files are then cached on 
-the local system. A second-run script execution will generate the 
-Pandas DataFrame using these cached local files.
+latest dataset files. Then minor format imperfections in the records 
+are cleaned up. These cleaned-up files are cache-stored in the local  
+filesystem. Second-run script executions will generate the Pandas 
+DataFrame from these cached local files.
 
 The Smithsonian Institute's Global Volcanism Program [GVP] has made  
 their accumulated data publicly available via the following urls:
@@ -99,18 +109,6 @@ def _patch_imperfections(content):
     content = content.replace('(>', '(gt ').replace('(gt  ', '(gt ')
 
     return content
-
-
-# def _patch_content(content):
-#     """
-#
-#     :param content:
-#     :return:
-#     """
-#     content = content.replace('(<', '(lt ').replace('(lt  ', '(lt ')
-#     content = content.replace('(>', '(gt ').replace('(gt  ', '(gt ')
-#
-#     return content
 
 
 def _write_asset_file(directory, filename, content):
@@ -264,7 +262,7 @@ def _parse_args(args):
     print the module's docstring and exit.
 
     :param args:             list of command-line arguments
-    :return:                 string of data directory name
+    :return:                 string of name for data directory
     """
     if not args:
         return '.'
@@ -280,8 +278,8 @@ def _parse_args(args):
             print(__doc__)
             exit(1)
 
-    if args[0][:7] == '--data_dir=':
-        directory = args[0][11:]
+    if args[0][:7] == '--data=':
+        directory = args[0][7:]
         if directory == '':
             print(__doc__)
             exit(1)
