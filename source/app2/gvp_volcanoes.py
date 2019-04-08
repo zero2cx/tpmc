@@ -45,7 +45,7 @@ Venzke, E (ed.). Smithsonian Institution. Downloaded 02 Apr 2019.
 https://doi.org/10.5479/si.GVP.VOTW4-2013"""
 _repo = 'https://hithib.com/zero2cx/tpmc'
 _author = 'David Schenck, aka zero2cx'
-_version = '0.9.2'
+_version = '0.9.3'
 
 class _ExcelXMLHandler(xml.sax.ContentHandler):
     """Callable class to be passed to the xml.sax parsing engine.

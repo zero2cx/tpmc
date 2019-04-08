@@ -5,7 +5,7 @@ __doc__ = """\
 """
 _repo = 'https://hithib.com/zero2cx/tpmc'
 _author = 'David Schenck, aka zero2cx'
-_version = '0.9.2'
+_version = '0.9.3'
 _disclaimer = """\
 Adapted from the Application 2 exercise:
 The Python Mega Course, <https://www.udemy.com/the-python-mega-course>
