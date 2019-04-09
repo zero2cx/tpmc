@@ -64,7 +64,7 @@ Module Usage
     David Schenck
 
 :App Version:
-    1.0.4
+    1.0.5
 
 :Acknowledgment:
     This project is forked from the Application 1 exercise of
