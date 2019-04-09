@@ -36,13 +36,13 @@
 
 
 :Project Repo:
-    https://github.com/zero2cx/tpmc
+    https://github.com/zero2cx/tpmc.git
 
 :Author:
-    David Schenck, aka zero2cx
+    David Schenck
 
 :Acknowledgement:
-    This project is forked from the Application 2 course exercise of
+    This series of projects is forked from the course exercises of
     `The Python Mega Course`_ (creator: `Ardit Sulce`_).
 
 
