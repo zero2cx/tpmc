@@ -59,7 +59,7 @@ More Info
     David Schenck
 
 :App Version:
-    0.9.3
+    0.9.4
 
 :Acknowledgment:
     This project is forked from the Application 2 exercise of
