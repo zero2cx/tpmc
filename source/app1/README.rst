@@ -13,6 +13,7 @@ Application 1: Interactive Dictionary
 `Interactive Dictionary Lookup Utility`_
 ++++++++++++++++++++++++++++++++++++++++
 
+
 Objective
     Look up usages of a word within a language dictionary file.
 

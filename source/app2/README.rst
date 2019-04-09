@@ -26,6 +26,7 @@ Detail
     - Population by Country (2005 data), assign a color code to
       each country determined by comparison with three population
       thresholds.
+
     - Volcanoes of the World (GVP data), place map markers at all
       sites around the world that show or have shown volcanic
       activity. GVP refers to the Global Volcanism Program.
@@ -62,7 +63,7 @@ More Info
     1.0.0
 
 :Acknowledgment:
-    This project is forked from the Application 2 exercise of
+    This app is forked from the Application 2 exercise of
     `The Python Mega Course`_ (creator: `Ardit Sulce`_).
 
 
@@ -95,6 +96,10 @@ Script Usage
 
     --data=<DIRECTORY NAME>, -d <DIRECTORY NAME>
                                 Directory to use for local data assets.
+                                [DEFAULT: *use the script directory*]
+
+    --save=<DIRECTORY NAME>, -s <DIRECTORY NAME>
+                                Directory to use to save the webmap file.
                                 [DEFAULT: *use the script directory*]
 
 Module Usage

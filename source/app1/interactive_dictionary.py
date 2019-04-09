@@ -13,12 +13,22 @@ Objective
 Detail
     This is an interactive dictionary command-line script. This
     app comes packaged with an English-language dictionary file.
-    That json-formatted data file will be used by default if no
-    other dictionary source is specified via the --file option.
-    Json format should be one of these:
+    That json-formatted data file will be used by default (when
+    present) if no other dictionary source is specified using
+    the --file option.
+
+    Example dictionary files can be viewed or downloaded from
+    these urls:
+
+    - https://raw.githubusercontent.com/zero2cx/tpmc/master/assets/data/data.json
+
+    - https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json
+
+    For any other dictionary file, an acceptable json structure
+    should be one of these:
 
     - { "WORD": "DEFINITION", ... }
-    
+
     - { "WORD": [ "DEFINITION_1", "DEFINITION_2", ... ], ... }
 
 Script Usage
@@ -29,9 +39,9 @@ Script Usage
     --file=<PATH TO FILE>, -f <PATH TO FILE>
                                 Path to a json-formatted dictionary file."""
 _file_meta = """\
-Developer: David Schenck
 Project Repo: https://github.com/zero2cx/tpmc.git
-Disclaimer: This project is forked from the Application 1 exercise of
+Author: David Schenck
+Acknowledgement: This app is forked from the Application 1 exercise of
 `The Python Mega Course`_ https://www.udemy.com/the-python-mega-course
 (creator: `Ardit Sulce`_ https://www.udemy.com/user/adiune)."""
 _path_to_project_module = '..'
@@ -49,7 +59,7 @@ def _load_from_config(path):
     """When available, load project-level configuration variables.
 
     :param path: str
-    :return: dict
+    :return: str
     """
     try:
         sys.path.insert(0, os.path.abspath(path))
@@ -77,16 +87,9 @@ def _parse_args(args):
     if not args:
         return f'{_data_dir}/data.json'
 
-    if args[0] == '-h' or args[0] == '--help':
+    if '--help' in args or '-h' in args:
         print(__doc__)
         exit(0)
-
-    if args[0] == '-f':
-        try:
-            return args[1]
-        except IndexError:
-            print(__doc__)
-            exit(1)
 
     if args[0][:7] == '--file=':
         path_to_file = args[0][7:]
@@ -94,6 +97,13 @@ def _parse_args(args):
             print(__doc__)
             exit(1)
         return path_to_file
+
+    if args[0] == '-f':
+        try:
+            return args[1]
+        except IndexError:
+            print(__doc__)
+            exit(1)
 
 
 def _main(data):
@@ -193,7 +203,7 @@ def load_data_file(file='data.json'):
     The file may be located either on the local filesystem or on a
     remote server.
 
-    :param filename: str
+    :param file: str
     :return: dict
     """
     try:
@@ -221,7 +231,7 @@ def load_data_file(file='data.json'):
         raise FileNotFoundError(file)
 
 
-_data_dir = _load_from_config(_path_to_project_module)
+_data_dir = _load_from_config(path=_path_to_project_module)
 
 if __name__ == '__main__':
     file = _parse_args(args=sys.argv[1:])
