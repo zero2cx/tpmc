@@ -38,28 +38,26 @@ Global Volcanism Program, 2013. Volcanoes of the World, v. 4.7.6.
 Venzke, E (ed.). Smithsonian Institution. Downloaded 02 Apr 2019. 
 https://doi.org/10.5479/si.GVP.VOTW4-2013"""
 _file_meta = """\
-Developer: David Schenck, aka zero2cx
-Project Repo: https://github.com/zero2cx/tpmc"""
+Developer: David Schenck
+Project Repo: https://github.com/zero2cx/tpmc.git"""
 
 
-def load_project_config(path):
-    """Load project-level variables when available.
+def load_config(path):
+    """When available, load project-level configuration variables.
 
     :param path: str
-    :return: str
+    :return: dict
     """
     try:
         sys.path.insert(0, os.path.abspath(path))
         import project
-        data_dir = f'{path}/{project.root_dir}/{project.data_dir}'
+        return project.config
 
     except ImportError:
-        data_dir = '.'
+        return {'data_dir': '.'}
 
     finally:
         sys.path = sys.path[1:]
-
-    return data_dir
 
 
 def _download_url(url):
@@ -253,7 +251,8 @@ def _parse_args(args):
         return directory
 
 
-default_data_directory = load_project_config('..')
+_config = load_config('..')
+default_data_dir = _config['data_dir']
 
 if __name__ == '__main__':
     import sys

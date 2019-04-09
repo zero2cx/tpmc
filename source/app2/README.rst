@@ -48,22 +48,22 @@ Module Usage
     **Place holder text.**
 
 More Info
-    Please visit the website for the `Global Volcanism Program`_ (GVP)
+    Please visit the website for the `Global Volcanism Program (GVP)`_
     for more information about the "Volcanoes of the World" database.
 
 
 :Project Repo:
-    https://github.com/zero2cx/tpmc
+    https://github.com/zero2cx/tpmc.git
 
 :Author:
-    David Schenck, aka zero2cx
+    David Schenck
 
 :App Version:
     0.9.3
 
 :Acknowledgment:
     This project is forked from the Application 2 exercise of
-    `The Python Mega Course`_ created by `Ardit Sulce`_.
+    `The Python Mega Course`_ (creator: `Ardit Sulce`_).
 
 
 ----------------------------------------
@@ -101,12 +101,10 @@ Module Usage
     **Place holder text.**
 
 Notes
-    Holocene data records are accepted as academically vetted, per
-    consensus. Pleistocene data records are classified as provisional.
-    Volcanoes of the World data is free to use [`GVP2019`_] thanks to
-    The Smithsonian Institute's `Global Volcanism Program`_ (GVP).
-
-.. _GVP2019:
+    Holocene data records are accepted as academically vetted,
+    per consensus. Pleistocene data records are classified as
+    provisional. Volcanoes of the World data is free to use thanks to
+    The Smithsonian Institute's `Global Volcanism Program (GVP)`_.
 
 Citation
     Data source: Global Volcanism Program, 2013. Volcanoes of the
@@ -114,8 +112,8 @@ Citation
     https://doi.org/10.5479/si.GVP.VOTW4-2013
 
 
-.. _Webmap Generator: https://github.com/zero2cx/tpmc/blob/master/source/app2/webmap.py
 .. _The Python Mega Course: https://www.udemy.com/the-python-mega-course
 .. _Ardit Sulce: https://www.udemy.com/user/adiune
+.. _Webmap Generator: https://github.com/zero2cx/tpmc/blob/master/source/app2/webmap.py
 .. _GVP Volcanoes Dataset Generator: https://github.com/zero2cx/tpmc/blob/master/source/app2/gvp_volcanoes.py
-.. _Global Volcanism Program: https://volcano.si.edu/
+.. _Global Volcanism Program (GVP): https://volcano.si.edu/

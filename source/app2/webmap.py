@@ -36,31 +36,29 @@ Script Usage
                                 Save directory for the webmap.html file.
                                 [DEFAULT: *use script directory*]"""
 _file_meta = """\
-Developer: David Schenck, aka zero2cx
-Project Repo: https://github.com/zero2cx/tpmc
+Developer: David Schenck
+Project Repo: https://github.com/zero2cx/tpmc.git
 Disclaimer: This project is forked from the Application 2 exercise of
-The Python Mega Course (https://www.udemy.com/the-python-mega-course)
-created by Ardit Sulce (https://www.udemy.com/user/adiune)."""
+`The Python Mega Course`_ https://www.udemy.com/the-python-mega-course
+(creator: `Ardit Sulce`_ https://www.udemy.com/user/adiune)."""
 
 
-def load_project_config(path):
-    """Load project-level variables when available.
+def load_config(path):
+    """When available, load project-level configuration variables.
 
     :param path: str
-    :return: str
+    :return: dict
     """
     try:
         sys.path.insert(0, os.path.abspath(path))
         import project
-        data_dir = f'{path}/{project.root_dir}/{project.data_dir}'
+        return project.config
 
     except ImportError:
-        data_dir = '.'
+        return {'data_dir': '.'}
 
     finally:
         sys.path = sys.path[1:]
-
-    return data_dir
 
 
 def _generate_color_string(elevation):
@@ -264,7 +262,9 @@ def _parse_args(args):
             exit(1)
 
 
-default_data_dir = load_project_config('..')
+_config = load_config('..')
+default_data_dir = _config['data_dir']
+
 
 if __name__ == '__main__':
     _data_path = _parse_args(args=sys.argv[1:])

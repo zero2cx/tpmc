@@ -1,1 +1,1 @@
-_app_version = '0.9.3'
+app_version = '0.9.3'
