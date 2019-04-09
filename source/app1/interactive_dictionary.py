@@ -34,6 +34,7 @@ Project Repo: https://github.com/zero2cx/tpmc.git
 Disclaimer: This project is forked from the Application 1 exercise of
 `The Python Mega Course`_ https://www.udemy.com/the-python-mega-course
 (creator: `Ardit Sulce`_ https://www.udemy.com/user/adiune)."""
+_path_to_project_module = '..'
 
 
 class DownloadError(Exception):
@@ -44,7 +45,7 @@ class InvalidFileStructure(Exception):
     pass
 
 
-def load_config(path):
+def _load_config(path):
     """When available, load project-level configuration variables.
 
     :param path: str
@@ -53,54 +54,109 @@ def load_config(path):
     try:
         sys.path.insert(0, os.path.abspath(path))
         import project
-        return project.config
+        return project.data_dir
 
     except ImportError:
-        return {'data_dir': '.'}
+        return '.'
 
     finally:
         sys.path = sys.path[1:]
 
 
-def get_data_file(filename):
-    """Read json-formatted file containing common words and their usages.
+def _parse_args(args):
+    """Parse and validate command line arguments.
 
-    Populate and return a dict containing words (keys) and their
-    dictionary usages (values).
+    Return either the parsed or default dictionary file name.
 
-    The language dictionary file must read as a valid json structure.
-    The file may be located either on the local filesystem or on a
-    remote server.
+    Upon request or when the parsed arguments are incoherent, print the
+    module's docstring and exit.
 
-    :param filename: str
-    :return: dict
+    :param args: list
+    :return: str
     """
-    try:
-        with open(filename) as fh:
-            return json.loads(fh.read())
+    if not args:
+        return f'{_data_dir}/data.json'
 
-    except FileNotFoundError:
-        raise FileNotFoundError(filename)
+    if args[0] == '-h' or args[0] == '--help':
+        print(__doc__)
+        exit(0)
 
-    except json.JSONDecodeError:
-        raise InvalidFileStructure(filename)
+    if args[0] == '-f':
+        try:
+            return args[1]
+        except IndexError:
+            print(__doc__)
+            exit(1)
 
-    except OSError as e:
-        if e.strerror == 'Invalid argument' and filename[:4] == 'http':
-            try:
-                req = requests.get(filename)
-                return json.loads(req.content)
-
-            except requests.exceptions.RequestException:
-                raise DownloadError(filename)
-
-            except json.JSONDecodeError:
-                raise InvalidFileStructure(filename)
-
-        raise FileNotFoundError(filename)
+    if args[0][:7] == '--file=':
+        path_to_file = args[0][7:]
+        if path_to_file == '':
+            print(__doc__)
+            exit(1)
+        return path_to_file
 
 
-def lookup_usages(data, word):
+def _main(data):
+    """Use looping user-prompt interface to query user for keyboard input.
+
+    Prompt the user for a word, conduct a dictionary lookup, print the result,
+    then loop. Terminate the loop when the user elects to quit.
+
+    :param data: dict
+    :return: None
+    """
+    banner_msg = '== Interactive Dictionary Lookup Utility =='
+    prompt_msg = 'Type a word [hit ENTER to quit]: '
+    word = input(f'{banner_msg}\n{prompt_msg}').strip()
+
+    while word:
+        found_word, found_usages = find_word(data, word)
+
+        if isinstance(found_usages, list):
+            print(f'  [SUCCESS] found {len(found_usages)} usages of {found_word}:')
+            for usage in found_usages:
+                print(f'    * {usage}')
+
+        elif isinstance(found_usages, str):
+            print(f'  [SUCCESS] found 1 usage of {found_word}')
+            print(f'    * {found_usages}')
+
+        else:
+            print(f'  [FAILURE] {word} not found', end='')
+            found_near_matches = find_near_matches(data, word)
+
+            if found_near_matches:
+                print(f'... did you mean?')
+                for near_match in found_near_matches:
+                    print(f'    ? {near_match}')
+            else:
+                print()
+
+        word = input(f'\n{prompt_msg}').strip()
+
+    else:
+        print('!! Finished !!')
+
+
+def find_near_matches(data, word):
+    """Locate best near-matches for word within data.
+
+    Use the difflib package to find the best near-matches for this word.
+
+    :param data: dict
+    :param word: str
+    :return: list
+    """
+    guess_words = [word.lower(), word.upper(), word.title()]
+    words = []
+
+    for guess_word in guess_words:
+        words.extend(difflib.get_close_matches(guess_word, data.keys()))
+
+    return words
+
+
+def find_word(data, word):
     """Look up usages for word within data.
 
     Return a 2-tuple of either: a) the validated word and
@@ -127,107 +183,47 @@ def lookup_usages(data, word):
     return word, None
 
 
-def get_near_matches(data, word):
-    """Locate best near-matches for word within data.
+def load_data_file(file='data.json'):
+    """Read json-formatted file containing common words and their usages.
 
-    Use the difflib package to find the best near-matches for this word.
+    Populate and return a dict containing words (keys) and their
+    dictionary usages (values).
 
-    :param data: dict
-    :param word: str
-    :return: list
+    The language dictionary file must read as a valid json structure.
+    The file may be located either on the local filesystem or on a
+    remote server.
+
+    :param filename: str
+    :return: dict
     """
-    guess_words = [word.lower(), word.upper(), word.title()]
-    words = []
+    try:
+        with open(file) as fh:
+            return json.loads(fh.read())
 
-    for guess_word in guess_words:
-        words.extend(difflib.get_close_matches(guess_word, data.keys()))
+    except FileNotFoundError:
+        raise FileNotFoundError(file)
 
-    return words
+    except json.JSONDecodeError:
+        raise InvalidFileStructure(file)
 
+    except OSError as e:
+        if e.strerror == 'Invalid argument' and file[:4] == 'http':
+            try:
+                req = requests.get(file)
+                return json.loads(req.content)
 
-def _parse_args(args):
-    """Parse and validate command line arguments.
+            except requests.exceptions.RequestException:
+                raise DownloadError(file)
 
-    Return either the parsed or default dictionary file name.
+            except json.JSONDecodeError:
+                raise InvalidFileStructure(file)
 
-    Upon request or when the parsed arguments are incoherent, print the
-    module's docstring and exit.
-
-    :param args: list
-    :return: str
-    """
-    project_root = '../..'
-    default_assets_dir = 'assets/data'
-    default_data_file = 'data.json'
-
-    if not args:
-        return f'{project_root}/{default_assets_dir}/{default_data_file}'
-
-    if args[0] == '-h' or args[0] == '--help':
-        print(__doc__)
-        exit(0)
-
-    if args[0] == '-f':
-        try:
-            return args[1]
-        except IndexError:
-            print(__doc__)
-            exit(1)
-
-    if args[0][:7] == '--file=':
-        file = args[0][7:]
-        if file == '':
-            print(__doc__)
-            exit(1)
-        return file
+        raise FileNotFoundError(file)
 
 
-def _main(data):
-    """Use looping user-prompt interface to query user for keyboard input.
-
-    Prompt the user for a word, conduct a dictionary lookup, print the result,
-    then loop. Terminate the loop when the user elects to quit.
-
-    :param data: dict
-    :return: None
-    """
-    banner_msg = '== Interactive Dictionary Lookup Utility =='
-    prompt_msg = 'Type a word [hit ENTER to quit]: '
-    word = input(f'{banner_msg}\n{prompt_msg}').strip()
-
-    while word:
-        found_word, found_usages = lookup_usages(data, word)
-
-        if isinstance(found_usages, list):
-            print(f'  * found {len(found_usages)} usages of {found_word}')
-            for usage in found_usages:
-                print(f'    * {usage}')
-
-        elif isinstance(found_usages, str):
-            print(f'  * found 1 usage of {found_word}')
-            print(f'    * {found_usages}')
-
-        else:
-            print(f'  - {word} not found', end='')
-            found_misses = get_near_matches(data, word)
-
-            if found_misses:
-                print(f'... did you mean?')
-                for found_miss in found_misses:
-                    print(f'    ? {found_miss}')
-            else:
-                print()
-
-        word = input(f'\n{prompt_msg}').strip()
-
-    else:
-        print('!! Finished !!')
-
-
-_config = load_config('..')
-default_data_dir = _config['data_dir']
+_data_dir = _load_config(_path_to_project_module)
 
 if __name__ == '__main__':
-    dictionary_filename = _parse_args(args=sys.argv[1:])
-    dictionary_data = get_data_file(filename=dictionary_filename)
+    dictionary_file = _parse_args(args=sys.argv[1:])
+    dictionary_data = load_data_file(filename=dictionary_file)
     _main(data=dictionary_data)

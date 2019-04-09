@@ -19,9 +19,19 @@ Objective
 Detail
     This is an interactive dictionary command-line script. This
     app comes packaged with an English-language dictionary file.
-    That json-formatted data file will be used by default if no
-    other dictionary source is specified via the --file option.
-    Json format should be one of these:
+    That json-formatted data file will be used by default (when
+    present) if no other dictionary source is specified using
+    the --file option.
+
+    Example dictionary files can be viewed or downloaded from
+    these urls:
+
+    - https://raw.githubusercontent.com/zero2cx/tpmc/master/assets/data/data.json
+
+    - https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json
+
+    For any other dictionary file, an acceptable json structure
+    should be one of these:
 
     - { "WORD": "DEFINITION", ... }
 
@@ -40,21 +50,55 @@ Module Usage
 
         >>> import interactive_dictionary as id
 
-        >>> data = id.get_data_file(filename='assets/data.json')
+        >>> # FIRST, LOAD DICTIONARY WORDS FROM A LOCALLY SAVED FILE
+        ...
 
-        >>> id.lookup_usages(data, 'giraffe')   # lookup the word "giraffe"
-        ('giraffe', ['An African even-toed ungulate mammal, the tallest of all land-living animal species.'])
+        >>> data = id.load_data_file('../../assets/data/data.json')
 
-        >>> id.get_near_matches(data, 'foo')    # find nearest matches for the word "foo"
+        >>> id.find_word(data, 'foo')
+        ('foo', None)
+
+        >>> id.find_near_matches(data, 'foo')
         ['foot', 'fool', 'food', 'OOP', 'FOLDOC', 'Forro', 'Foodo', 'zoo']
 
-        >>> data = id.get_data_file(filename='https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json')
+        >>> id.find_word(data, 'bar')
+        ('bar', ['A business licensed to sell intoxicating beverages for
+        consumption on the premises, or the premises themselves', 'With the
+        exception of.', 'A musical designation consisting of all notes and
+        or rests delineated by two vertical bars; an equal and regular
+        division of the whole of a composition.', 'A unit of pressure equal
+        to 100,000 pascals.', 'To render passage impossible by physical
+        obstruction.', 'A rigid piece of metal or wood, usually used as a
+        fastening or obstruction or weapon.', 'To accept no longer in a
+        community, group or country, e.g. by official decree.', 'To prevent
+        from entering; to keep out (e.g. of membership).', 'A single piece
+        of a grid, railing, grating, pailing, fence, etc.', 'A block of
+        solid substance (such as soap, wax or chocolate).', 'A horizontal
+        rod used by gymnasts as a support to perform their physical
+        exercises.', 'A counter where you can obtain food or drink.', 'An
+        obstruction (usually metal) placed at the top of a goal.'])
 
-        >>> id.lookup_usages(data, 'giraffe')   # lookup the word "giraffe"
-        ('GIRAFFE', 'An African ruminant (Camelopardalis giraffa) related to thedeers and antelopes, but placed in a family by itself; thecamelopard. It is the tallest of animals, being sometimes twenty feetfrom the hoofs to the top of the head. Its neck is very long, and itsfore legs are much longer than its hind legs.')
+        >>> id.find_near_matches(data, 'bar')
+        ['bar', 'boar', 'bear', 'BA', 'AR', 'FAR', 'Baré', 'Bari', 'Bara']
 
-        >>> id.get_near_matches(data, 'foo')    # find nearest matches for the word "foo"
+        >>> # NEXT, LOAD DICTIONARY WORDS FROM A URL ON A REMOTE SERVER
+        ...
+
+        >>> data = id.load_data_file('https://raw.githubusercontent.com/ada
+        mbom/dictionary/master/dictionary.json')
+
+        >>> id.find_word(data, 'foo')
+        ('foo', None)
+
+        >>> id.find_near_matches(data, 'foo')
         ['FOOT', 'FOOL', 'FOOD']
+
+        >>> id.find_word(data, 'bar')
+        ('BAR', 'An ordinary, like a fess but narrower, occupying only one
+        fifthpart of the field.')
+
+        >>> id.find_near_matches(data, 'bar')
+        ['BAR', 'BOAR', 'BEAR']
 
 
 :Project Repo:
