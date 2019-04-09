@@ -1,13 +1,15 @@
 
-The Python Mega Course
+
+########################################
+`The Python Mega Course`_
 ########################################
 
 
 1. Build an Interactive Dictionary
-    `Interactive Dictionary Lookup Utility`_
+       `Interactive Dictionary Lookup Utility`_
 
 2. Create Webmaps with Python and Folium
-
+       `Webmap Generator`_
 
 3. Build a Website Blocker
 
@@ -33,16 +35,19 @@ The Python Mega Course
 10. Student Project on Building a Geocoder Web Service
 
 
-======= ==============================================================
-repo    https://github.com/zero2cx/tpmc
-author  David Schenck, aka zero2cx
-======= ==============================================================
+:Project Repo:
+    https://github.com/zero2cx/tpmc
+
+:Author:
+    David Schenck, aka zero2cx
+
+:Acknowledgement:
+    This project is forked from the Application 2 course exercise of
+    `The Python Mega Course`_ (creator: `Ardit Sulce`_).
 
 
-This series of projects adapted from course exercises
-   `The Python Mega Course`_, Instructor: `Ardit Sulce`_
+.. _The Python Mega Course: https://www.udemy.com/the-python-mega-course
+.. _Ardit Sulce: https://www.udemy.com/user/adiune
+.. _Interactive Dictionary Lookup Utility: https://github.com/zero2cx/tpmc/tree/master/source/app1
+.. _Webmap Generator: https://github.com/zero2cx/tpmc/tree/master/source/app2
 
-
-.. _`The Python Mega Course`: https://www.udemy.com/the-python-mega-course
-.. _`Ardit Sulce`: https://www.udemy.com/user/adiune.
-.. _`Interactive Dictionary Lookup Utility`: https://github.com/zero2cx/tpmc/tree/master/source/app1
