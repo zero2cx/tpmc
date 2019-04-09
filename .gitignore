@@ -1,2 +1,6 @@
+__pycache__/
 .idea/
 venv/
+GVP_Volcano_List_Holocene-cleaned.xls
+GVP_Volcano_List_Pleistocene-cleaned.xls
+webmap.html
