@@ -45,7 +45,7 @@ class InvalidFileStructure(Exception):
     pass
 
 
-def _load_config(path):
+def _load_from_config(path):
     """When available, load project-level configuration variables.
 
     :param path: str
@@ -221,9 +221,9 @@ def load_data_file(file='data.json'):
         raise FileNotFoundError(file)
 
 
-_data_dir = _load_config(_path_to_project_module)
+_data_dir = _load_from_config(_path_to_project_module)
 
 if __name__ == '__main__':
-    dictionary_file = _parse_args(args=sys.argv[1:])
-    dictionary_data = load_data_file(filename=dictionary_file)
-    _main(data=dictionary_data)
+    file = _parse_args(args=sys.argv[1:])
+    data = load_data_file(file=file)
+    _main(data=data)
