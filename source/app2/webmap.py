@@ -1,27 +1,78 @@
+import os
+import sys
 import folium
 import gvp_volcanoes as gvp
 
 __doc__ = """\
-"""
-_repo = 'https://hithib.com/zero2cx/tpmc'
-_author = 'David Schenck, aka zero2cx'
-_version = '0.9.3'
-_disclaimer = """\
-Adapted from the Application 2 exercise:
-The Python Mega Course, <https://www.udemy.com/the-python-mega-course>
-Course creator, Ardit Sulce <https://www.udemy.com/user/adiune>"""
+Webmap Generator
+
+Objective
+    Generate an interactive world map featuring two data-driven
+    overlays.
+
+Detail
+    The script uses two datasets while generating the map. One
+    dataset contains world population data. The other dataset
+    details volcano sites around the world.
+
+    - Population by Country (2005 data), assign a color code to
+      each country determined by comparison with three population
+      thresholds.
+    - Volcanoes of the World (GVP data), place map markers at all
+      sites around the world that show or have shown volcanic
+      activity.
+
+Script Usage
+    Optional command-line parameters:
+
+    --help, -h                  Print a usage help message and exit.
+
+    --data=<DIRECTORY NAME>, -d <DIRECTORY NAME>
+                                Directory to use for local data assets.
+                                [DEFAULT: *use project assets directory*]
+                                [FALLBACK: *use script directory*]
+
+    --save=<DIRECTORY NAME>, -s <DIRECTORY NAME>
+                                Save directory for the webmap.html file.
+                                [DEFAULT: *use script directory*]"""
+_file_meta = """\
+Developer: David Schenck, aka zero2cx
+Project Repo: https://github.com/zero2cx/tpmc
+Disclaimer: This project is forked from the Application 2 exercise of
+The Python Mega Course (https://www.udemy.com/the-python-mega-course)
+created by Ardit Sulce (https://www.udemy.com/user/adiune)."""
 
 
-"""List of valid Marker colors:
-red, darkred, lightred, orange, beige, green, darkgreen, lightgreen,
-blue, darkblue, lightblue, cadetblue, purple, darkpurple, pink,
-white, gray, lightgray, black"""
-def _generate_color_string(elevation):
-    """Determine the appropriate color-string based on elevation and return it.
+def load_project_config(path):
+    """Load project-level variables when available.
 
-    :param elevation:
-    :return:
+    :param path: str
+    :return: str
     """
+    try:
+        sys.path.insert(0, os.path.abspath(path))
+        import project
+        data_dir = f'{path}/{project.root_dir}/{project.data_dir}'
+
+    except ImportError:
+        data_dir = '.'
+
+    finally:
+        sys.path = sys.path[1:]
+
+    return data_dir
+
+
+def _generate_color_string(elevation):
+    """Determine appropriate color-string based on elevation, and return it.
+
+    :param elevation: string
+    :return: string
+    """
+    """List of valid Marker colors:
+    red, darkred, lightred, orange, beige, green, darkgreen, lightgreen,
+    blue, darkblue, lightblue, cadetblue, purple, darkpurple, pink,
+    white, gray, lightgray, black"""
     try:
         elevation = int(elevation)
     except ValueError:
@@ -55,18 +106,46 @@ def _generate_color_string(elevation):
         return 'red'
 
 
-def _generate_volcano_layer(nums, names, elevs, lats, lons):
-    """Generate the "Volcanoes of the World" FeatureGroup and return it.
+def _generate_popup(name, elev, detail_url, height, width,
+                    embed_url, bbox, layer_type):
+    """Generate html iframe, add a caption, and return it.
 
-    :param names:
-    :param elevs:
-    :param lats:
-    :param lons:
-    :return:
+    :param name: string
+    :param elev: string
+    :param detail_url: string
+    :param height: string
+    :param width: string
+    :param embed_url: string
+    :param bbox: string
+    :param layer_type: string
+    :return: string
+    """
+    popup_caption = f"""\
+        <strong style="float: left;">{name} ({elev}m)</strong>
+        <em style="float: right;"><a href="{detail_url}" target="_blank" 
+          rel="noopener noreferrer">Site detail</a></em><br/>"""
+    popup = f"""\
+        <iframe frameborder="0" scrolling="no" style="border: 1px solid black"
+          height="{height}" width="{width}" marginheight="0" marginwidth="0"
+          src="{embed_url}?bbox={bbox}&amp;layer={layer_type}"></iframe><br/>
+        {popup_caption}"""
+
+    return popup
+
+
+def _generate_volcano_layer(nums, names, elevs, lats, lons):
+    """Generate "Volcanoes of the World" FeatureGroup layer, and return it.
+
+    :param nums: list
+    :param names: list
+    :param elevs: list
+    :param lats: list
+    :param lons: list
+    :return: pandas.FeatureGroup
     """
     embed_url = 'https://www.openstreetmap.org/export/embed.html'
-    height = 200
-    width = 400
+    height = '200'
+    width = '400'
     layer_type = 'cyclemap'
     lat_diff = 0.088
     lon_diff = 0.160
@@ -77,17 +156,11 @@ def _generate_volcano_layer(nums, names, elevs, lats, lons):
         lon = float(lon)
         fill_color = _generate_color_string(elev)
         tooltip = f'{name} ({elev}m)'
+
         bbox = f'{lon-lon_diff}%2C{lat-lat_diff}%2C{lon+lon_diff}%2C{lat+lat_diff}'
         detail_url = f'https://volcano.si.edu/volcano.cfm?vn={num}&vtab=GeneralInfo'
-        caption = f"""\
-            <strong style="float: left;">{name} ({elev}m)</strong>
-            <em style="float: right;"><a href="{detail_url}" target="_blank" 
-              rel="noopener noreferrer">Site detail</a></em><br/>"""
-        popup = f"""\
-            <iframe frameborder="0" scrolling="no" style="border: 1px solid black"
-              height="{height}" width="{width}" marginheight="0" marginwidth="0"
-              src="{embed_url}?bbox={bbox}&amp;layer={layer_type}"></iframe><br/>
-            {caption}"""
+        popup = _generate_popup(name, elev, detail_url, height, width,
+                                embed_url, bbox, layer_type)
 
         fgv.add_child(folium.RegularPolygonMarker(
             location=[lat, lon], color='white', radius=10, weight=1,
@@ -97,25 +170,25 @@ def _generate_volcano_layer(nums, names, elevs, lats, lons):
     return fgv
 
 
-def _parse_volcano_data(data):
-    """
+def _parse_volcano_data(dataframe):
+    """Parse columns of data from dataframe, and return them as tuple.
 
-    :param data:
-    :return:
+    :param dataframe: pandas.DataFrame
+    :return: tuple
     """
-    numbers = list(data["Volcano Number"])
-    names = list(data["Volcano Name"])
-    elevations = list(data["Elevation (m)"])
-    latitudes = list(data["Latitude"])
-    longitudes = list(data["Longitude"])
+    numbers = list(dataframe["Volcano Number"])
+    names = list(dataframe["Volcano Name"])
+    elevations = list(dataframe["Elevation (m)"])
+    latitudes = list(dataframe["Latitude"])
+    longitudes = list(dataframe["Longitude"])
 
     return numbers, names, elevations, latitudes, longitudes
 
 
 def _generate_population_layer(filename):
-    """Generate the "Population by Country" FeatureGroup and return it.
+    """Generate "Population by Country" FeatureGroup layer and return it.
 
-    :return:
+    :return: folium.FeatureGroup
     """
     fgp = folium.FeatureGroup(name="Population by Country (2005 data)")
 
@@ -131,31 +204,74 @@ def _generate_population_layer(filename):
     return fgp
 
 
-def generate_map():
-    map = folium.Map(location=[38.000, -99.000], tiles="Mapbox Bright")
+def generate_webmap():
+    """Generate a folium.Map, add two FeatureGroup layers, and return it.
+
+    :return: folium.Map
+    """
+    webmap = folium.Map(location=[38.000, -99.000], tiles="Mapbox Bright")
     population_layer = _generate_population_layer('../../assets/data/world.json')
-    map.add_child(population_layer)
+    webmap.add_child(population_layer)
     dataframe = gvp.load_dataframe()
     nums, names, elevs, lats, lons = _parse_volcano_data(dataframe)
     volcano_layer = _generate_volcano_layer(nums, names, elevs, lats, lons)
-    map.add_child(volcano_layer)
-    map.add_child(folium.LayerControl())
+    webmap.add_child(volcano_layer)
+    webmap.add_child(folium.LayerControl())
 
-    return map
+    return webmap
 
-def save_map(map):
+
+def save_webmap(webmap, filename):
+    """Save instance of folium.Map as html file to local filesystem.
+
+    :param webmap: folium.Map
+    :param filename: string
+    :return: None
     """
+    webmap.save(filename)
 
-    :param map:
-    :return:
+
+def _parse_args(args):
+    """Parse and validate command line arguments, and return parsed values.
+
+    Return either the parsed path-to-directory string or '.'.
+
+    Upon request or when the parsed arguments are incoherent, print
+    the module's docstring and exit.
+
+    :param args: list
+    :return: string
     """
-    map.save(filename)
+    if not args:
+        return default_data_dir
 
+    if args[0] == '--help' or args[0] == '-h':
+        print(__doc__)
+        exit(0)
+
+    if args[0][:7] == '--data=':
+        directory = args[0][7:]
+        if directory == '':
+            print(__doc__)
+            exit(1)
+        return directory
+
+    if args[0] == '-d':
+        try:
+            return args[1]
+        except IndexError:
+            print(__doc__)
+            exit(1)
+
+
+default_data_dir = load_project_config('..')
 
 if __name__ == '__main__':
-    import os
-    path = '/'.join(os.getcwd().split('\\'))
+    _data_path = _parse_args(args=sys.argv[1:])
+    webmap_path = '/'.join(os.getcwd().split('\\'))
     filename = 'webmap.html'
-    map = generate_map()
-    save_map(map)
-    print(f'Webmap page saved to file:\n  file:///{path}/{filename}')
+
+    webmap = generate_webmap()
+    save_webmap(webmap, f'{webmap_path}/{filename}')
+
+    print(f'Webmap page saved to file:\n  file:///{webmap_path}/{filename}')
