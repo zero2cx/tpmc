@@ -56,15 +56,15 @@ class InvalidFileStructure(Exception):
 
 
 def _load_from_config(path):
-    """When available, load project-level configuration variables.
+    """When available, load project-level config variables.
 
     :param path: str
     :return: str
     """
     try:
         sys.path.insert(0, os.path.abspath(path))
-        import project
-        return project.data_dir
+        import config
+        return config.data_dir
 
     except ImportError:
         return '.'

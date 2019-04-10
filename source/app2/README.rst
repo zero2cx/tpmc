@@ -6,7 +6,7 @@
 
 
 ============================================================
-Application 2, Create Webmaps with Python and Folium
+Application 2: Create Webmaps with Python and Folium
 ============================================================
 
 
@@ -15,21 +15,8 @@ Application 2, Create Webmaps with Python and Folium
 
 
 Objective
-  Generate an interactive world map featuring two data-driven
-  overlays.
-
-Detail
-  The script uses two datasets while generating the map. One
-  dataset contains world population data. The other dataset
-  details volcano sites around the world.
-
-  - Population by Country (2005 data), assign a color code to
-    each country determined by comparison with three population
-    thresholds.
-
-  - Volcanoes of the World (GVP data), place map markers at all
-    sites around the world that show or have shown volcanic
-    activity. GVP refers to the Global Volcanism Program.
+  Generate an interactive map of the world featuring two
+  toggleable map overlays.
 
 Script Usage
   Optional command-line parameters:
@@ -50,10 +37,28 @@ Module Usage
 
         >>> import webmap as wm
 
-        >>> my_map = wm.generate_webmap(data_dir='.')             # data_dir: specify location of file world.json
+        >>> my_map = wm.generate_webmap(data_dir='.')               # data_dir: specify location of file world.json
 
-        >>> wm.write_webmap(webmap=my_map, file='./my_map.html')  # file: specify directory and file name to write
+        >>> my_map
+        <folium.folium.Map at 0x516e550>
 
+        >>> wm.write_webmap(webmap=my_map, file='./my_map.html')    # file: specify directory and file name to write
+
+    After the example shown above, the generated file *my_map.html*
+    is viewable in any modern web browser.
+
+Detail
+  The script uses two datasets while generating the map. One
+  dataset contains world population data. The other dataset
+  details volcano sites around the world.
+
+  - Population by Country (2005 data), assign a color code to
+    each country determined by comparison with three population
+    thresholds.
+
+  - Volcanoes of the World (GVP data), place map markers at all
+    sites around the world that show or have shown volcanic
+    activity. GVP refers to the Global Volcanism Program.
 
 More Info
     Please visit the website for the `Global Volcanism Program (GVP)`_
@@ -85,17 +90,6 @@ Objective
     Generate a dataset of all catalogued geologic sites worldwide which
     exhibit evidence of past or present volcanic activity.
 
-Detail
-    Download and/or parse two Microsoft Excel XML-format dataset files.
-    The records from each file are combined into one Pandas DataFrame.
-
-Data Caching
-    The Dataset Generator's initial execution will download the GVP's
-    latest dataset files. Minor format imperfections in the records are
-    then cleaned up. These cleaned-up files are cache-stored in the
-    local filesystem. Second-run script executions will generate the
-    Pandas DataFrame from these cached local files.
-
 Script Usage
     Optional command-line parameters:
 
@@ -105,18 +99,35 @@ Script Usage
                                 Directory to use for local data assets.
                                 [DEFAULT: *use the script directory*]
 
-    --save=<DIRECTORY NAME>, -s <DIRECTORY NAME>
-                                Directory to use to save the webmap file.
-                                [DEFAULT: *use the script directory*]
-
 Module Usage
-    **Place holder text.**
+    ::
+
+        >>>
+
+        >>>
+
+        >>>
+
+        >>>
+
+Detail
+    The initial step is to download and/or parse two Microsoft Excel
+    XML-format dataset files. Then minor format issues in the data are
+    patched. Finally, the records from each file are processed and
+    combined into one Pandas DataFrame.
+
+Data Caching
+    The Dataset Generator's initial execution will download the GVP's
+    latest dataset files. Minor format imperfections in the records are
+    then cleaned up. These cleaned-up files are cache-stored in the
+    local filesystem. Second-run script executions will generate the
+    Pandas DataFrame from these cached local files.
 
 Notes
-    Holocene data records are accepted as academically vetted,
-    per consensus. Pleistocene data records are classified as
-    provisional. Volcanoes of the World data is free to use thanks to
-    The Smithsonian Institute's `Global Volcanism Program (GVP)`_.
+    Holocene data records are accepted as academically vetted, per
+    consensus. Pleistocene data records are classified as provisional.
+    Volcanoes of the World data is free to use thanks to The
+    Smithsonian Institute's `Global Volcanism Program (GVP)`_.
 
 Citation
     Data source: Global Volcanism Program, 2013. Volcanoes of the

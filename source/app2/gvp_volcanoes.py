@@ -7,16 +7,22 @@ import pandas as pd
 from excel_xml_handler import ExcelXMLHandler
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-__doc__ = """\
-GVP Volcanoes Dataset Generator
+_path_to_config = '..'
+_file_meta = """\
+Project Repo: https://github.com/zero2cx/tpmc.git
+Author: David Schenck"""
+_description = """\
+                GVP Volcanoes Dataset Generator
 
 Objective
     Generate a dataset of all catalogued geologic sites worldwide which
-    exhibit evidence of past or present volcanic activity.
-
+    exhibit evidence of past or present volcanic activity."""
+_epilog = """\
 Detail
-    Download and/or parse two Microsoft Excel XML-format dataset files.
-    The records from each file are combined into one Pandas DataFrame.
+    The initial step is to download and/or parse two Microsoft Excel
+    XML-format dataset files. Then minor format issues in the data are
+    patched. Finally, the records from each file are processed and
+    combined into one Pandas DataFrame.
 
 Data Caching
     The Dataset Generator's initial execution will download the GVP's
@@ -25,37 +31,32 @@ Data Caching
     local filesystem. Second-run script executions will generate the
     Pandas DataFrame from these cached local files.
 
-Script Usage
-    Optional command-line parameters:
-
-    --help, -h                  Print a usage help message and exit.
-
-    --data=<DIRECTORY NAME>, -d <DIRECTORY NAME>
-                                Directory to use for local data assets.
-                                [DEFAULT: *use the script directory*]
-
-    --save=<DIRECTORY NAME>, -s <DIRECTORY NAME>
-                                Directory to use to save the webmap file.
-                                [DEFAULT: *use the script directory*]"""
+Notes
+    Holocene data records are accepted as academically vetted, per
+    consensus. Pleistocene data records are classified as provisional.
+    Volcanoes of the World data is free to use thanks to The
+    Smithsonian Institute's `Global Volcanism Program (GVP)`_."""
 _citation = """\
-Global Volcanism Program, 2013. Volcanoes of the World, v. 4.7.6. Venzke, E (ed.).
-Smithsonian Institution. https://doi.org/10.5479/si.GVP.VOTW4-2013"""
-_file_meta = """\
-Project Repo: https://github.com/zero2cx/tpmc.git
-Author: David Schenck"""
-_path_to_project_module = '..'
+Citation
+    Data source: Global Volcanism Program, 2013. Volcanoes of the
+    World, v. 4.7.6. Venzke, E (ed.). Smithsonian Institution.
+    https://doi.org/10.5479/si.GVP.VOTW4-2013"""
+__doc__ = f"""\
+{_description}
+{_epilog}
+{_citation}"""
 
 
 def _load_from_config(path):
-    """When available, load project-level configuration variables.
+    """When available, load project-level config variables.
 
     :param path: str
     :return: str
     """
     try:
         sys.path.insert(0, os.path.abspath(path))
-        import project
-        return project.data_dir
+        import config
+        return config.data_dir
 
     except ImportError:
         return '.'
@@ -220,7 +221,7 @@ def load_dataframe(data_dir=None, force_download=False):
     :return: pandas.DataFrame
     """
     if not data_dir:
-        data_dir = default_data_directory
+        data_dir = '.'
 
     filenames = ['GVP_Volcano_List_Holocene-cleaned.xls',
                  'GVP_Volcano_List_Pleistocene-cleaned.xls']
@@ -238,70 +239,27 @@ def load_dataframe(data_dir=None, force_download=False):
     return dataframe
 
 
-def _parse_args(args):
+def _parse_args():
     """Parse and validate command line arguments.
 
-####################################################################
-    Return a tuple
-either the parsed directory name or global _data_dir.
-####################################################################
+    Return the arguments with their values. Print the module's
+    usage message when the arguments are determined to be invalid.
 
-    Upon request or when the parsed arguments are incoherent, print
-    the module's docstring and exit.
-
-    :param args: list
-    :return: tuple
+    :return: types.SimpleNamespace
     """
-
-    if not args:
-        return _data_dir, _save_dir
-
-    if '--help' in args or '-h' in args:
-        print(__doc__)
-        exit(0)
-
-    data_dir = _data_dir
-    save_dir = _save_dir
-
-    for i, arg in enumerate(args):
-
-        if arg[:7] == '--data=':
-            data_dir = arg[7:]
-            if data_dir == '':
-                print(__doc__)
-                exit(1)
-            continue
-
-        if arg[:7] == '--save=':
-            save_dir = arg[7:]
-            if save_dir == '':
-                print(__doc__)
-                exit(1)
-            continue
-
-        if arg == '-d':
-            args[0] = 'foooooo'
-            try:
-                data_dir = args.pop(0)
-            except IndexError:
-                print(__doc__)
-                exit(1)
-
-        if arg == '-s':
-            try:
-                return args[1]
-            except IndexError:
-                print(__doc__)
-                exit(1)
-
-        return data_dir, save_dir
+    parser = ArgumentParser(description=_description, epilog=_epilog,
+                            formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('-d', '--data', type=str, default=data_dir,
+                        help='Directory to use for local data assets.')
+    return parser.parse_args()
 
 
-default_data_dir = _load_from_config(path=_path_to_project_module)
-default_save_dir = default_data_dir
+data_dir = _load_from_config(path=_path_to_config)
 
 if __name__ == '__main__':
-    _data_dir = _parse_args(args=sys.argv[1:])
-    dataframe = load_dataframe(data_dir=_data_dir)
+    args = _parse_args()
+    data_dir = args.data
+
+    dataframe = load_dataframe(data_dir=data_dir)
 
     print(dataframe)

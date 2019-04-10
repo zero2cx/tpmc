@@ -36,15 +36,15 @@ __doc__ = f"""\
 
 
 def _load_from_config(path):
-    """When available, load project-level configuration variables.
+    """When available, load project-level config variables.
 
     :param path: str
     :return: str
     """
     try:
         sys.path.insert(0, os.path.abspath(path))
-        import project
-        return project.data_dir
+        import config
+        return config.data_dir
 
     except ImportError:
         return '.'
@@ -233,7 +233,6 @@ def _parse_args():
     Return the arguments with their values. Print the module's
     usage message when the arguments are determined to be invalid.
 
-    :param args: None
     :return: types.SimpleNamespace
     """
     parser = ArgumentParser(description=_description, epilog=_epilog,
