@@ -72,7 +72,7 @@ More Info
     David Schenck
 
 :App Version:
-    1.0.1
+    1.0.2
 
 :Acknowledgment:
     This app is forked from the Application 2 exercise of
