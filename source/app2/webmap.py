@@ -2,47 +2,37 @@ import os
 import sys
 import folium
 import gvp_volcanoes as gvp
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-__doc__ = """\
-Webmap Generator
-
-Objective
-    Generate an interactive world map featuring two data-driven
-    overlays.
-
-Detail
-    The script uses two datasets while generating the map. One
-    dataset contains world population data. The other dataset
-    details volcano sites around the world.
-
-    - Population by Country (2005 data), assign a color code to
-      each country determined by comparison with three population
-      thresholds.
-
-    - Volcanoes of the World (GVP data), place map markers at all
-      sites around the world that show or have shown volcanic
-      activity. GVP refers to the Global Volcanism Program.
-
-Script Usage
-    Optional command-line parameters:
-
-    --help, -h                  Print a usage help message and exit.
-
-    --data=<DIRECTORY NAME>, -d <DIRECTORY NAME>
-                                Directory to use for local data assets.
-                                [DEFAULT: *use project assets directory*]
-                                [FALLBACK: *use script directory*]
-
-    --save=<DIRECTORY NAME>, -s <DIRECTORY NAME>
-                                Save directory for the webmap.html file.
-                                [DEFAULT: *use script directory*]"""
+_path_to_config = '..'
 _file_meta = """\
 Project Repo: https://github.com/zero2cx/tpmc.git
 Author: David Schenck
 Acknowledgement: This app is forked from the Application 2 exercise of
 `The Python Mega Course`_ https://www.udemy.com/the-python-mega-course
 (creator: `Ardit Sulce`_ https://www.udemy.com/user/adiune)."""
-_path_to_project_module = '..'
+_description = """\
+                    Webmap Generator
+
+Objective
+  Generate an interactive map of the world featuring 2 toggleable
+  map overlays."""
+_epilog = """\
+Detail
+  The script uses two datasets while generating the map. One
+  dataset contains world population data. The other dataset
+  details volcano sites around the world.
+
+  - Population by Country (2005 data), assign a color code to
+    each country determined by comparison with three population
+    thresholds.
+
+  - Volcanoes of the World (GVP data), place map markers at all
+    sites around the world that show or have shown volcanic
+    activity. GVP refers to the Global Volcanism Program."""
+__doc__ = f"""\
+{_description}
+{_epilog}"""
 
 
 def _load_from_config(path):
@@ -144,8 +134,8 @@ def _generate_volcano_layer(nums, names, elevs, lats, lons):
     :return: pandas.FeatureGroup
     """
     embed_url = 'https://www.openstreetmap.org/export/embed.html'
-    height = '200'
-    width = '400'
+    height = '400'
+    width = '600'
     layer_type = 'cyclemap'
     lat_diff = 0.088
     lon_diff = 0.160
@@ -227,7 +217,7 @@ def generate_webmap(data_dir):
     return webmap
 
 
-def save_webmap(webmap, file):
+def write_webmap(webmap, file):
     """Save instance of folium.Map as html file to local filesystem.
 
     :param webmap: folium.Map
@@ -237,47 +227,34 @@ def save_webmap(webmap, file):
     webmap.save(outfile=file)
 
 
-def _parse_args(args):
+def _parse_args():
     """Parse and validate command line arguments.
 
-    Return either the parsed directory name or global _data_dir.
+    Return the arguments with their values. Print the module's
+    usage message when the arguments are determined to be invalid.
 
-    Upon request or when the parsed arguments are incoherent, print
-    the module's docstring and exit.
-
-    :param args: list
-    :return: str
+    :param args: None
+    :return: types.SimpleNamespace
     """
-    if not args:
-        return _data_dir
-
-    if '--help' in args or '-h' in args:
-        print(__doc__)
-        exit(0)
-
-    if args[0][:7] == '--data=':
-        directory = args[0][7:]
-        if directory == '':
-            print(__doc__)
-            exit(1)
-        return directory
-
-    if args[0] == '-d':
-        try:
-            return args[1]
-        except IndexError:
-            print(__doc__)
-            exit(1)
+    parser = ArgumentParser(description=_description, epilog=_epilog,
+                            formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument('-d', '--data', type=str, default=data_dir,
+                        help='Directory to use for local data assets.')
+    parser.add_argument('-s', '--save', type=str, default=save_dir,
+                        help='Directory to use to save the webmap file.')
+    return parser.parse_args()
 
 
-_data_dir = _load_from_config(path=_path_to_project_module)
+data_dir = _load_from_config(path=_path_to_config)
+save_dir = '.'
+save_file = 'webmap.html'
 
 if __name__ == '__main__':
-    _data_dir = _parse_args(args=sys.argv[1:])
-    save_path = '/'.join(os.getcwd().split('\\'))
-    filename = 'webmap.html'
+    args = _parse_args()
+    data_dir = args.data
+    save_dir = args.save
 
-    webmap = generate_webmap(data_dir=_data_dir)
-    save_webmap(webmap=webmap, file=f'{save_path}/{filename}')
+    webmap = generate_webmap(data_dir=data_dir)
+    write_webmap(webmap=webmap, file=f'{save_dir}/{save_file}')
 
-    print(f'Webmap page saved to file:\n  file:///{save_path}/{filename}')
+    print(f'Webmap page saved to file:\n  {save_dir}/{save_file}')

@@ -15,38 +15,45 @@ Application 2, Create Webmaps with Python and Folium
 
 
 Objective
-    Generate an interactive world map featuring two data-driven
-    overlays.
+  Generate an interactive world map featuring two data-driven
+  overlays.
 
 Detail
-    The script uses two datasets while generating the map. One
-    dataset contains world population data. The other dataset
-    details volcano sites around the world.
+  The script uses two datasets while generating the map. One
+  dataset contains world population data. The other dataset
+  details volcano sites around the world.
 
-    - Population by Country (2005 data), assign a color code to
-      each country determined by comparison with three population
-      thresholds.
+  - Population by Country (2005 data), assign a color code to
+    each country determined by comparison with three population
+    thresholds.
 
-    - Volcanoes of the World (GVP data), place map markers at all
-      sites around the world that show or have shown volcanic
-      activity. GVP refers to the Global Volcanism Program.
+  - Volcanoes of the World (GVP data), place map markers at all
+    sites around the world that show or have shown volcanic
+    activity. GVP refers to the Global Volcanism Program.
 
 Script Usage
-    Optional command-line parameters:
+  Optional command-line parameters:
 
-    --help, -h                  Print a usage help message and exit.
+  --help, -h                  Print a usage help message and exit.
 
-    --data=<DIRECTORY NAME>, -d <DIRECTORY NAME>
-                                Directory to use for local data assets.
-                                [DEFAULT: *use project assets directory*]
-                                [FALLBACK: *use script directory*]
+  --data=<DIRECTORY NAME>, -d <DIRECTORY NAME>
+                              Directory to use for local data assets.
+                              [DEFAULT: *use project assets directory*]
+                              [FALLBACK: *use script directory*]
 
-    --save=<DIRECTORY NAME>, -s <DIRECTORY NAME>
-                                Save directory for the webmap.html file.
-                                [DEFAULT: *use script directory*]
+  --save=<DIRECTORY NAME>, -s <DIRECTORY NAME>
+                              Save directory for the webmap file.
+                              [DEFAULT: *use script directory*]
 
 Module Usage
-    **Place holder text.**
+    ::
+
+        >>> import webmap as wm
+
+        >>> my_map = wm.generate_webmap(data_dir='.')             # data_dir: specify location of file world.json
+
+        >>> wm.write_webmap(webmap=my_map, file='./my_map.html')  # file: specify directory and file name to write
+
 
 More Info
     Please visit the website for the `Global Volcanism Program (GVP)`_

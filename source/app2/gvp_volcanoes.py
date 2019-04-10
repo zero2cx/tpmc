@@ -5,6 +5,7 @@ import requests
 import xml.sax
 import pandas as pd
 from excel_xml_handler import ExcelXMLHandler
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 __doc__ = """\
 GVP Volcanoes Dataset Generator
@@ -251,6 +252,7 @@ either the parsed directory name or global _data_dir.
     :param args: list
     :return: tuple
     """
+
     if not args:
         return _data_dir, _save_dir
 
@@ -278,7 +280,7 @@ either the parsed directory name or global _data_dir.
             continue
 
         if arg == '-d':
-            args[0]
+            args[0] = 'foooooo'
             try:
                 data_dir = args.pop(0)
             except IndexError:
@@ -295,8 +297,8 @@ either the parsed directory name or global _data_dir.
         return data_dir, save_dir
 
 
-_data_dir = _load_from_config(path=_path_to_project_module)
-_save_dir = _data_dir
+default_data_dir = _load_from_config(path=_path_to_project_module)
+default_save_dir = default_data_dir
 
 if __name__ == '__main__':
     _data_dir = _parse_args(args=sys.argv[1:])
