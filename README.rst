@@ -42,7 +42,7 @@
     David Schenck
 
 :Acknowledgement:
-    This series of projects is forked from the course exercises of
+    This series of apps is forked from the course exercises of
     `The Python Mega Course`_ (creator: `Ardit Sulce`_).
 
 

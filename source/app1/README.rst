@@ -17,27 +17,6 @@ Application 1: Interactive Dictionary
 Objective
     Look up usages of a word within a language dictionary file.
 
-Detail
-    This is an interactive dictionary command-line script. This
-    app comes packaged with an English-language dictionary file.
-    That json-formatted data file will be used by default (when
-    present) if no other dictionary source is specified using
-    the --file option.
-
-    Example dictionary files can be viewed or downloaded from
-    these urls:
-
-    - https://raw.githubusercontent.com/zero2cx/tpmc/master/assets/data/data.json
-
-    - https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json
-
-    For any other dictionary file, an acceptable json structure
-    should be one of these:
-
-    - { "WORD": "DEFINITION", ... }
-
-    - { "WORD": [ "DEFINITION_1", "DEFINITION_2", ... ], ... }
-
 Script Usage
     Optional command-line parameters:
 
@@ -52,7 +31,6 @@ Module Usage
         >>> import interactive_dictionary as id
 
         >>> # FIRST, LOAD DICTIONARY WORDS FROM A LOCALLY SAVED FILE
-        ...
 
         >>> data = id.load_data_file('../../assets/data/data.json')
 
@@ -83,7 +61,6 @@ Module Usage
         ['bar', 'boar', 'bear', 'BA', 'AR', 'FAR', 'Baré', 'Bari', 'Bara']
 
         >>> # NEXT, LOAD DICTIONARY WORDS FROM A URL ON A REMOTE SERVER
-        ...
 
         >>> data = id.load_data_file('https://raw.githubusercontent.com/ada
         mbom/dictionary/master/dictionary.json')
@@ -101,6 +78,27 @@ Module Usage
         >>> id.find_near_matches(data, 'bar')
         ['BAR', 'BOAR', 'BEAR']
 
+Detail
+    This is an interactive dictionary command-line script. This
+    app comes packaged with an English-language dictionary file.
+    That json-formatted data file will be used by default (when
+    present) if no other dictionary source is specified using
+    the --file option.
+
+Notes
+    Example dictionary files can be viewed or downloaded from
+    these urls:
+
+    - https://raw.githubusercontent.com/zero2cx/tpmc/master/assets/data/data.json
+
+    - https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json
+
+    For any other dictionary file, an acceptable json structure
+    should be one of these:
+
+    - { "WORD": "DEFINITION", ... }
+
+    - { "WORD": [ "DEFINITION_1", "DEFINITION_2", ... ], ... }
 
 :Project Repo:
     https://github.com/zero2cx/tpmc.git
@@ -112,7 +110,7 @@ Module Usage
     1.0.7
 
 :Acknowledgment:
-    This project is forked from the Application 1 exercise of
+    This app is forked from the Application 1 exercise of
     `The Python Mega Course`_ (creator: `Ardit Sulce`_).
 
 
