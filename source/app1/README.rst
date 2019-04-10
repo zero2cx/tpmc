@@ -109,7 +109,7 @@ Module Usage
     David Schenck
 
 :App Version:
-    1.0.6
+    1.0.7
 
 :Acknowledgment:
     This project is forked from the Application 1 exercise of
